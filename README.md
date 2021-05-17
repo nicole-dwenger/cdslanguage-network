@@ -30,7 +30,7 @@ The data used for this project is a dataset from [Kaggle](https://www.kaggle.com
 Note: I am aware, that the replacing of names in step 2 might induce some biases, as these names might have a higher weight, compared to others were variations of names are still present. Ideally, all names referring to the same name could be replaced. However, this is relies on some assumptions, e.g. *Hillary* is *Hillary Clinton* and not a different *Hillary*. 
 
 ### Network Analysis
-The script for network analysis in this repository generates a network graph from a weighted edgelist. It generates a graph using spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html). 
+The script for network analysis in this repository generates a network graph from a weighted edgelist. It generates a graph using spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). 
 Further, it computes centrality measures, which can provide differen information of the nodes (here the named entities, persons):
 - Degree centrality: measure of how many edges are connected to a given node
 - Eigenvector centraliy: measure of how much a given node is connected to other well-connected nodes
