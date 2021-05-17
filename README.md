@@ -128,7 +128,7 @@ cd src/
 python3 1_network_analysis.py
 
 # run script for specified input data
-python3 0_create_edgelist.py -i ../out/0_edgelists/edgelist_FAKE.csv
+python3 1_network_analysis.py -i ../out/0_edgelists/edgelist_FAKE.csv
 ```
 
 __Parameters:__
