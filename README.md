@@ -5,17 +5,12 @@
 ## Description
 > This project relates to Assignment 3: Network Analysis of the course Language Analytics.
 
-Additional:
-- Attempt to implement coreference resolution on entities (time-consuming)
-- Bundle your code up into a Python class, focusing on code modularity
-- Let the user define which graphing algorithm they use (pretty tricky)
-- Are there other ways of creating networks, rather than just document co-occurrence? (really tricky)
+Network Analysis can be applied in many different ways and for different purposes across different fiels of research. One of these fields is NLP. For instance, it can be used to find named entities which are occuring in the same document, and thus explore relationships or the importance of different entities (nodes) in a given network. 
 
-Network Analysis ..
+In this project, networks of names enitites of persons in fake and real news are explored. For this, a dataset of fake and real news from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is used. Network graphs and measures are generated for both subsets of REAL and FAKE news, and for all news. 
 
+This repository provides a script to extract a weighted edgelist of texts in the fake and real news dataset. More importantly, it provides a generalisable command-line script for simple network analysis. This script can not only be used for the fake and real news dataset, but for any dataframe of similar structure as the weighted edgelist generated from this data (see more information below). Lastly, this script also served the purpose of illustrating how functions of the network analysis can be bundled up into a class for modularity. 
 
-Can be used to find entities, which are occuring together in the same document. 
-The aim of this project was to build a reusable command-line tool to perform a simple network analysis. The data used for this project was dataset of real and fake news from kaggle. Thus, this script contains both a script to extract a weighted edgelist of this particular dataset, and a rather generalisable script to conduct a simple network analysis of a preprocessed, weighted edgelist. Further, this project aims to illustrate how functions for the network analysis can be bundled up into a class. 
 
 ## Methods
 
@@ -25,17 +20,18 @@ The data used for this project is a dataset from [Kaggle](https://www.kaggle.com
 1. Extract named entities of each text
 2. Clean the named entities (this step is not exhaustive!):
     - Remove ":" (were appearing in some named entities)
-    - Replace "Hillary", "hillary", "Clinton", "clinton", "hillary clinton", "Hillary Rodham Clinton", "Hillary Clinton's" with "Hillary Clinton"
-    - Replace "trump", "Trump", "donald trump" with "Donald Trump"
-    - Replace "obama", "Obama", "barack obama" with "Barack Obama"
+    - Replace *Hillary, hillary, Clinton, clinton, hillary clinton, Hillary Rodham Clinton, Hillary Clinton's* with *Hillary Clinton*
+    - Replace *trump, Trump, donald trump, Donald J Trump, Donald J. Drump* with *Donald Trump*
+    - Replace *obama, Obama, barack obama* with *Barack Obama*
 3. Generate all possible combinations (edges) of pairs of named entities (nodes) 
 4. Calculate the number of occurance of these combinations (edges) 
 5. Save pairs of nodes and their occurance (weight) in a dataframe, with `nodeA`, `nodeB`, `weight`
 
+Note: I am aware, that the replacing of names in step 2 might induce some biases, as these names might have a higher weight, compared to others were variations of names are still present. Ideally, all names referring to the same name could be replaced. However, this is relies on some assumptions, e.g. *Hillary* is *Hillary Clinton* and not a different *Hillary*. 
+
 ### Network Analysis
-
-
-Centrality measures, can provide information about the nodes (i.e. in this case the people). Degree centrality is a measure of how many edges are connected to a given node:
+The script for network analysis in this repository generates a network graph from a weighted edgelist. It generates a graph using spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html). 
+Further, it computes centrality measures, which can provide differen information of the nodes (here the named entities, persons):
 - Degree centrality: measure of how many edges are connected to a given node
 - Eigenvector centraliy: measure of how much a given node is connected to other well-connected nodes
 - Betweenness centrality: measure of how import the node is for connections between other nodes, i.e. the flow of the network
@@ -155,19 +151,18 @@ __Output__ saved in `out/0_network_analysis/`:
   
 
 ## Results and Discussion 
-Output of the scripts can be found in the corresponding directory in `out/`. Besides providing a script for simple network analysis, the aim of this project was also to compare the networks of persons mentioned in fake and real news. Below, the networks of fake and real news for edges with a minimum edgeweight of 500 are displayed.
+Output of the scripts can be found in the corresponding directory in `out/`. Besides providing a script for simple network analysis, the aim of this project was also to compare the networks of persons mentioned in fake and real news. Below, the networks of fake and real news for edges with a minimum edgeweight of 500 are displayed:
 
 REAL news: 
-![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network_analysis/centrality_measures_edgelist_REAL.csv)
+
+![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_REAL.png)
 
 FAKE news:
-![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network_analysis/centrality_measures_edgelist_FAKE.csv)
+
+![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_FAKE.png)
 
 
-
-
-
-
+As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarise have a higher weight, than those where several name variants are still in the data. 
 
 
 

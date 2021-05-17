@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 """
 Script to generate graph and csv of centrality measures from weighted edgelist (csv with nodeA, nodeB, weight)
 
@@ -15,7 +14,7 @@ Input:
   
 Output saved in ../out/1_network_analysis/
   - network_graph_{filename}.py
-  - centralitty_measures_{filename}.py
+  - centrality_measures_{filename}.py
 """
 
 
@@ -36,7 +35,7 @@ import matplotlib.pyplot as plt
 
 def main():
     
-    # --- ARGUMENT PARSER ---
+    # --- ARGUMENT PARSER AND OUTPUT DIRECTORY ---
         
     # Initialise argument parser
     ap = argparse.ArgumentParser()
@@ -54,19 +53,17 @@ def main():
     input_filepath = args["input_filepath"]
     min_edgeweight = args["min_edgeweight"]
         
-    # Get filename for output_directory
-    filename = get_filename(input_filepath)
     # Create output directory
     out_directory = os.path.join("..", "out", "1_network")
     if not os.path.exists(out_directory):
         os.makedirs(out_directory)
         
+    # Get name of input file to save corresponding output
+    filename = get_filename(input_filepath)
+        
     # --- NETWORK ANALYSIS ---
     
     print(f"\nInitialising Network Analysis for {input_filepath}.")
-    
-    # Get name of input file to save corresponding output
-    filename = get_filename(input_filepath)
     
     # Read edges dataframe
     input_df = pd.read_csv(input_filepath)
@@ -76,38 +73,51 @@ def main():
     # Initialise Network Analysis
     network = NetworkAnalysis(edges_df)
     
-    # Define output path for network graph
-    out_graph = os.path.join(out_directory, f"network_graph_{input_filename}.png")
     # Create and save network graph
+    out_graph = os.path.join(out_directory, f"network_graph_{filename}.png")
     network.draw_graph(out_graph)
     
-    # Define output path for centrality measures
-    out_df = os.path.join(out_directory, f"centrality_measures_{input_filename}.csv")
     # Generate and save centrality measures
-    network.get_centrality_measures(out_df)
+    out_measures = os.path.join(out_directory, f"centrality_measures_{filename}.csv")
+    network.get_centrality_measures(out_measures)
     
     print(f"Done! Graph and centrality measures saved in {out_directory}")
     
     
-def get_filename(filepath):
+# HELPER FUNCTIONS --------------------------------------------
     
+def get_filename(filepath):
+    """
+    Get filename from filepath, without extension 
+    Input:
+      - filepath
+    Returns:
+      - filename: name without directory and entension
+    """
+    # Get only the name of the file
     filename_ext = os.path.basename(filepath)
+    # Get the name of the file without the extnesion
     filename = os.path.splitext(filename_ext)[0]
 
     return filename
       
+    
 class NetworkAnalysis:
     
     def __init__(self, edges_df):
         
+        # Dataframe with weighted edgelist
         self.edges_df = edges_df
-        self.graph = None
+        # Generate graph from edgelist when initialising 
+        self.graph = nx.from_pandas_edgelist(self.edges_df, "nodeA", "nodeB", ["weight"])
     
     def draw_graph(self, output_path):
-        
-        # Draw graph from edgelist
-        self.graph = nx.from_pandas_edgelist(self.edges_df, "nodeA", "nodeB", ["weight"])
-
+        """
+        Draw spring network graph from weighted edgelist and save in output_path as .png
+        Input:
+          - output_path: outuput_path for graph visualisation
+        Appends graph to 
+        """
         # Define layout for network, with increased distance between nodes
         spring_layout = nx.spring_layout(self.graph, k=math.sqrt(self.graph.order()))
 
@@ -122,16 +132,29 @@ class NetworkAnalysis:
         plt.savefig(output_path, dpi=300, bbox_inches="tight")
     
     def get_centrality_measures(self, output_path):
-        
+        """
+        Generate centrality measures from graph and save as dataframe 
+        Calcualtes degree, betweenness, eigenvector for each node
+        Input: 
+          - output_path: output path for csv file
+        """
+        # Retrieve nodes from graph
         nodes = nx.nodes(self.graph)
+        # Retrieve dregree measure from graph
         degree = nx.degree_centrality(self.graph)
+        # Retrieve betweenness measure from graph
         betweenness = nx.betweenness_centrality(self.graph)
+        # Retrieve eigenvector measure from graph
         eigenvector = nx.eigenvector_centrality(self.graph)
 
+        # Zip nodes and measures together
         centrality_measures = zip(nodes, degree.values(), betweenness.values(), eigenvector.values())
+        # Save zipped measures in data frame
         centrality_df = pd.DataFrame(centrality_measures, columns = ["node", "degree", "betweenness", "eigenvector"])
+        # Sort dataframe, with highest measures at top
         centrality_df_sorted = centrality_df.sort_values(["degree", "betweenness", "eigenvector"], ascending=False)
 
+        # Save df as csv in output path
         centrality_df_sorted.to_csv(output_path)
 
         

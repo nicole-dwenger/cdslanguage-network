@@ -66,7 +66,7 @@ def main():
     # Print message
     print(f"[INFO] Creating weighted edgelist for {input_filepath} for {subset_option} news.")
     
-    # Read csv file 
+    # Read input csv file
     df = pd.read_csv(input_filepath)
     
     # If subset option is FAKE or REAL, subset dataframe
@@ -81,11 +81,11 @@ def main():
     
     # For each text in the text list
     for text in tqdm(text_list):
-        # Extract the entities
+        # Extract the entities with the label "PERSON"
         text_entities = extract_entities(text, label = "PERSON")
-        # Clean entities
+        # Clean entities, i.e. remove duplicates
         cleaned_entities = clean_entities(text_entities)
-        # Create an edgelist of the entities
+        # Create an edgelist of the entities, i.e. combinations of nodes
         text_edgelist = create_edgelist(cleaned_entities)
         # Append the text edgelist, to an overall edgelist
         edgelist.extend(text_edgelist)
@@ -135,10 +135,18 @@ def extract_entities(text, label):
     return entities
 
 def clean_entities(entities):
+    """
+    Function specifically target towards news data,
+    remove ":", replace duplicates for Hillary Clinton, Donald Trump, Barack Obama
+    Input:
+      - entities: list of extracted entities
+    Retuns:
+      - entities: list of cleaned entities
+    """
     
     # remove ":"
     for entity in entities:
-        entity = re.sub(r"\:", "", entity) 
+        entity = re.sub(r":", "", entity) 
     
     # Replace duplicates
     for index, entity in enumerate(entities):
@@ -149,7 +157,7 @@ def clean_entities(entities):
             entities[index] = "Hillary Clinton"
         
         # If entity in list, replace with "Donald Trump"
-        if entity in ["trump", "Trump", "donald trump"]:
+        if entity in ["trump", "Trump", "donald trump", "Donald J Trump", "Donald J. Trump"]:
             entities[index] = "Donald Trump"
         
         # If entity in list, replace with "Barack Obama"
@@ -183,7 +191,7 @@ def count_edges(edgelist):
     Input:
       - edgelist: list of sorted edges
     Output: 
-      - pandas df with "nodeA", "nodeB", "weight"
+      - df: df with "nodeA", "nodeB", "weight"
     """
     # Create empty lists for nodes and weights
     nodeA = []
