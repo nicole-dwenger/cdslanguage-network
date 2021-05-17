@@ -162,7 +162,10 @@ FAKE news:
 ![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_FAKE.png)
 
 
-As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarise have a higher weight, than those where several name variants are still in the data. 
+The first thing, that becomes apparent when comparing these two graphs, is that there are fewer nodes in the FAKE graph compared to the REAL news. Looking at the centrality measures, there is about half (54) as many nodes as in the REAL (98) news dataset. This is likely due to the minimum edgeweight of 500, and would imply that there fewer edges above an edgeweight of 500 in the FAKE news data. This could either mean, that there were generally less named entities in the data, or that there is fewer names, which occur together often. 
+
+Overall, in both graphs Hillary Clinton seems to be an important node in the data, as she also has the highest centrality measures, for degree, eigenvector, betweenness. As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarise have a higher weight, than those where several name variants are still in the data. 
+
 
 
 
