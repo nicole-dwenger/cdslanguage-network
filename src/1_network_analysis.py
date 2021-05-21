@@ -31,59 +31,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-# MAIN FUNCTION -----------------------------------------------
-
-def main():
-    
-    # --- ARGUMENT PARSER AND OUTPUT DIRECTORY ---
-        
-    # Initialise argument parser
-    ap = argparse.ArgumentParser()
-    
-    # Input option for input file 
-    ap.add_argument("-i", "--input_filepath", help="Path to input file, CSV with 'nodeA', 'nodeB', 'weight'",
-                    required=False, default="../out/edgelist_ALL.csv")
-    
-    # Input option for minimum edgeweight to plot
-    ap.add_argument("-m", "--min_edgeweight", type=int, help="Minimum edgeweight of interest",
-                    required=False, default=500)
-    
-    # Retrieve inputs
-    args = vars(ap.parse_args())
-    input_filepath = args["input_filepath"]
-    min_edgeweight = args["min_edgeweight"]
-        
-    # Create output directory
-    out_directory = os.path.join("..", "out", "1_network")
-    if not os.path.exists(out_directory):
-        os.makedirs(out_directory)
-        
-    # Get name of input file to save corresponding output
-    filename = get_filename(input_filepath)
-        
-    # --- NETWORK ANALYSIS ---
-    
-    print(f"\nInitialising Network Analysis for {input_filepath}.")
-    
-    # Read edges dataframe
-    input_df = pd.read_csv(input_filepath)
-    # Keep only those edges which are above the minimum edgeweight 
-    edges_df = input_df[input_df["weight"] > min_edgeweight]
-    
-    # Initialise Network Analysis
-    network = NetworkAnalysis(edges_df)
-    
-    # Create and save network graph
-    out_graph = os.path.join(out_directory, f"network_graph_{filename}.png")
-    network.draw_graph(out_graph)
-    
-    # Generate and save centrality measures
-    out_measures = os.path.join(out_directory, f"centrality_measures_{filename}.csv")
-    network.get_centrality_measures(out_measures)
-    
-    print(f"Done! Graph and centrality measures saved in {out_directory}")
-    
-    
 # HELPER FUNCTIONS --------------------------------------------
     
 def get_filename(filepath):
@@ -156,6 +103,59 @@ class NetworkAnalysis:
 
         # Save df as csv in output path
         centrality_df_sorted.to_csv(output_path)
+
+
+# MAIN FUNCTION -----------------------------------------------
+
+def main():
+    
+    # --- ARGUMENT PARSER AND OUTPUT DIRECTORY ---
+        
+    # Initialise argument parser
+    ap = argparse.ArgumentParser()
+    
+    # Input option for input file 
+    ap.add_argument("-i", "--input_filepath", help="Path to input file, CSV with 'nodeA', 'nodeB', 'weight'",
+                    required=False, default="../out/edgelist_ALL.csv")
+    
+    # Input option for minimum edgeweight to plot
+    ap.add_argument("-m", "--min_edgeweight", type=int, help="Minimum edgeweight of interest",
+                    required=False, default=500)
+    
+    # Retrieve inputs
+    args = vars(ap.parse_args())
+    input_filepath = args["input_filepath"]
+    min_edgeweight = args["min_edgeweight"]
+        
+    # Get name of input file to save corresponding output
+    filename = get_filename(input_filepath)
+    
+    # Create output directory
+    out_directory = os.path.join("..", "out", "1_network")
+    if not os.path.exists(out_directory):
+        os.makedirs(out_directory)
+        
+    # --- NETWORK ANALYSIS ---
+    
+    print(f"\nInitialising Network Analysis for {input_filepath}.")
+    
+    # Read edges dataframe
+    input_df = pd.read_csv(input_filepath)
+    # Keep only those edges which are above the minimum edgeweight 
+    edges_df = input_df[input_df["weight"] > min_edgeweight]
+    
+    # Initialise Network Analysis
+    network = NetworkAnalysis(edges_df)
+    
+    # Create and save network graph
+    out_graph = os.path.join(out_directory, f"network_graph_{filename}.png")
+    network.draw_graph(out_graph)
+    
+    # Generate and save centrality measures
+    out_measures = os.path.join(out_directory, f"centrality_measures_{filename}.csv")
+    network.get_centrality_measures(out_measures)
+    
+    print(f"Done! Graph and centrality measures saved in {out_directory}")
 
         
 if __name__ == "__main__":
