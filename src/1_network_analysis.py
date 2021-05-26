@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
 """
-Script to generate graph and csv of centrality measures from weighted edgelist (csv with nodeA, nodeB, weight)
+Script to take weighted edgelist (.csv with nodeA, nodeB, weight) to 
+generate network graph with spring layout and save csv of centrality measures.
 
 Steps:
   - Read weighted edgelist and filter by minimum weight
-  - Create and save network graph
+  - Create and save network graph with spring layout
   - Extract degree, betweenness and eigenvector centrality measures and save as csv
 
 Input: 
-  - -i, --input_filepath, optional, default = ../out/0_edgelists/weighted_edgelist_ALL.csv"
+  - -i, --input_filepath, optional, default = ../out/0_edgelists/edgelist_REAL.csv"
   - -m, --minimum_edgeweight, optional, default = 500, mimimum edgeweight to consider for network 
   
-Output saved in ../out/1_network_analysis/
+Output saved in ../out/1_network_analysis/:
   - network_graph_{filename}.py
   - centrality_measures_{filename}.py
 """
@@ -47,9 +48,15 @@ def get_filename(filepath):
     filename = os.path.splitext(filename_ext)[0]
 
     return filename
-      
-    
+          
 class NetworkAnalysis:
+    """
+    Class for network analysis
+    Initialised with dataframe with weighted edgelist and graph 
+    Functions: 
+      - draw_grpah: draw graph with spring layout
+      - get_centrality_measures: get degree, betweenness and eigenvector measures
+    """
     
     def __init__(self, edges_df):
         
@@ -58,12 +65,11 @@ class NetworkAnalysis:
         # Generate graph from edgelist when initialising 
         self.graph = nx.from_pandas_edgelist(self.edges_df, "nodeA", "nodeB", ["weight"])
     
-    def draw_graph(self, output_path):
+    def draw_graph(self, out_path):
         """
         Draw spring network graph from weighted edgelist and save in output_path as .png
         Input:
-          - output_path: outuput_path for graph visualisation
-        Appends graph to 
+          - out_path: out_path for graph visualisation
         """
         # Define layout for network, with increased distance between nodes
         spring_layout = nx.spring_layout(self.graph, k=math.sqrt(self.graph.order()))
@@ -76,14 +82,14 @@ class NetworkAnalysis:
         nx.draw_networkx_labels(self.graph, spring_layout, font_size=5, verticalalignment="bottom")
 
         # Save the graph
-        plt.savefig(output_path, dpi=300, bbox_inches="tight")
+        plt.savefig(out_path, dpi=300, bbox_inches="tight")
     
-    def get_centrality_measures(self, output_path):
+    def get_centrality_measures(self, out_path):
         """
         Generate centrality measures from graph and save as dataframe 
         Calcualtes degree, betweenness, eigenvector for each node
         Input: 
-          - output_path: output path for csv file
+          - out_path: output path for csv file
         """
         # Retrieve nodes from graph
         nodes = nx.nodes(self.graph)
@@ -102,7 +108,7 @@ class NetworkAnalysis:
         centrality_df_sorted = centrality_df.sort_values(["degree", "betweenness", "eigenvector"], ascending=False)
 
         # Save df as csv in output path
-        centrality_df_sorted.to_csv(output_path)
+        centrality_df_sorted.to_csv(out_path)
 
 
 # MAIN FUNCTION -----------------------------------------------
@@ -116,7 +122,7 @@ def main():
     
     # Input option for input file 
     ap.add_argument("-i", "--input_filepath", help="Path to input file, CSV with 'nodeA', 'nodeB', 'weight'",
-                    required=False, default="../out/edgelist_ALL.csv")
+                    required=False, default="../out/0_edgelists/edgelist_REAL.csv")
     
     # Input option for minimum edgeweight to plot
     ap.add_argument("-m", "--min_edgeweight", type=int, help="Minimum edgeweight of interest",
