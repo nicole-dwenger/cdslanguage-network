@@ -105,6 +105,8 @@ class NetworkAnalysis:
         centrality_df = pd.DataFrame(centrality_measures, columns = ["node", "degree", "betweenness", "eigenvector"])
         # Sort dataframe, with highest measures at top
         centrality_df_sorted = centrality_df.sort_values(["degree", "betweenness", "eigenvector"], ascending=False)
+        # Reset index 
+        centrality_df_sorted = centrality_df_sorted.reset_index(drop=True)
 
         # Save df as csv in output path
         centrality_df_sorted.to_csv(out_path)
