@@ -131,7 +131,7 @@ __Parameters:__
 - `-i, --input_filepath`: *str, optional, default:* `../out/0_edgelists/edgelist_REAL.csv`\
     File path to csv of weighted edgelist with with columns nodeA, nodeB, weight. If you have preprocessed the fake and real news dataset and which to run network analysis for these files, use default for real news, `../out/0_edgelists/edgelist_FAKE.csv` for fake news or `../out/0_edgelists/edgelist_ALL.csv` for all news.
     
-- `-m, --min_edgeweight`: *str, optional, default:* `500`\
+- `-m, --min_edgeweight`: *int, optional, default:* `500`\
    Minimum edgeweight to consider for network graph. 
    
 
@@ -157,7 +157,7 @@ Network graph of fake news with minimum edgeweight of 500:
 
 Overall, in both graphs Hillary Clinton seems to be an important node in the data, as she also has the highest centrality measures, for degree, eigenvector, betweenness. Further, Donald Trump, Barack Obama and Bill Clinton also seem to be quite interconnected and closely related to Hillary. As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarise have a higher weight, than those where several name variants are still in the data. 
 
-When comparing graphs of real and fake news, it seems like there are fewer nodes and edges in the fake compared to the real news. Looking at the .csv of centrality measures, there is about half (34) as many nodes in the fake compared to the real (98) news data. This could have several reasons, such as overall fewer named entities in the fake news data (which could also be caused by less text), fewer entities which are highly connected (with a minimum edgeweight of 500). 
+When comparing graphs of real and fake news, it seems like there are fewer nodes and edges in the fake compared to the real news. Looking at the .csv of centrality measures, there is about half (54) as many nodes in the fake compared to the real (98) news data. This could have several reasons, such as overall fewer named entities in the fake news data (which could also be caused by less text), fewer entities which are highly connected (with a minimum edgeweight of 500). 
 
 
 ## Contact
