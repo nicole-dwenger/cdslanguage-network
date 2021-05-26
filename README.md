@@ -147,11 +147,11 @@ __Output__ saved in `out/1_network_analysis/`:
 ## Results and Discussion 
 Output of the scripts can be found in the corresponding directory in `out/`. Besides providing a script for simple network analysis, the aim of this project was also to compare the networks of named entitie (people) in fake and real news. Below, the networks of fake and real news for edges with a minimum edgeweight of 500 are displayed:
 
-Network Graph of real news with minimum edgeweight of 500:
+Network graph of real news with minimum edgeweight of 500:
 
 ![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_REAL.png)
 
-Network Graph of fake news with minimum edgeweight of 500:
+Network graph of fake news with minimum edgeweight of 500:
 
 ![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_FAKE.png)
 
