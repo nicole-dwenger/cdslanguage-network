@@ -141,7 +141,7 @@ __Output__ saved in `out/1_network_analysis/`:
    Network graph of edges with minimum edgeweight, using spring layout. 
 
 - `centrality_measures_{input_filename}.csv`\
-   CSV with columns of `node`, `degree`, `eigenvector`, `betweenness` for centrality measures of edges of nodes with minimum edgeweight. 
+   CSV with columns of node, degree, eigenvector, betweenness for centrality measures of edges of nodes with minimum edgeweight. 
   
 
 ## Results and Discussion 
