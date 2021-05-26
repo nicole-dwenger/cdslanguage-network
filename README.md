@@ -1,4 +1,4 @@
-# Network Analysis of Named Entities in Fake and Real News
+# Network Analysis: Named Entities in Fake and Real News
 
 [Description](#description) | [Methods](#methods) | [Repository Structure](#repository-structure) | [Usage](#usage) | [Results and Disucssion](#results-and-discussion) | [Contact](#contact)
 
