@@ -5,8 +5,8 @@
 ## Description
 > This project relates to Assignment 4: Network Analysis of the course Language Analytics.
 
-Network Analysis can be applied in many different ways and for different purposes across different fields of research. One of these fields is NLP. For instance, it can be used to find named entities which are occurring in the same document, and thus entities (nodes) and their relations (edges) in a given network. 
-In this project, networks of names entities of people in fake and real news are explored using a dataset from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset). Network graphs and measures are generated for both subsets of real news, fake news, and for all news.
+Network Analysis can be applied in many different ways and for different purposes across different fields of research. One of these fields is NLP. For instance, it can be used to find named entities which are occurring in the same document, and thus entities (nodes) and their relations (edges) in a given network. In this project, networks of names entities of people in fake and real news are explored using a dataset from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset). Network graphs and measures are generated for both subsets of real news, fake news, and for all news.
+
 The repository provides two scripts: (1) a script targeted toward the news-headline data, to extract a weighted edge-list of texts in the fake and real news dataset, and (2) a generalisable command-line script for simple network analysis. When developing the scripts, one aim was also to bundle up functions in a class for increased code modularity.
 
 ## Methods
@@ -21,15 +21,13 @@ The data used for this project is a dataset from [Kaggle](https://www.kaggle.com
     - Replace *trump*, *Trump*, *donald trump*, *Donald J Trump*, *Donald J. Trump* with *Donald Trump*.
     - Replace *obama*, *Obama*, *barack obama* with *Barack Obama*.
 3. Generate all possible combinations (edges) of pairs of named entities (nodes). 
-4. Calculate the number of occurance of these combinations (edges) across all texts.
-5. Save pairs of nodes and their occurances (weight) in a .csv file, with columns `nodeA`, `nodeB`, `weight`.
+4. Calculate the number of occurance of these combinations (edges).
+5. Save pairs of nodes and their occurances (weight) in a .csv file, with columns nodeA, nodeB, weight.
 
 **Note:** I am aware, that the replacing of names in step 2 might induce some biases, as these names might have a higher weight, compared to others were variations of names are still present. Ideally, all names referring to the same name could be replaced. However, this also relies on some assumptions, e.g. *Hillary* is *Hillary Clinton* and not a different *Hillary*. 
 
 ### Network Analysis
-Network Analysis was performed by generating a network graph from the weighted edge-list. This graph was generated using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html))
-
-Further, it computes centrality measures, which can provide differen information of the nodes (here the named entities, persons) and edges:
+Network Analysis was performed by generating a network graph from the weighted edge-list. This graph was generated using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). Further, it computes centrality measures, which can provide differen information of the nodes (here the named entities, persons) and edges:
 - Degree centrality: Degree centrality is a measure of how many edges are connected to a given node. A node (entity) which is connected to many nodes may be more important. 
 - Eigenvector centrality: Eigenvector centrality is a measure of how much a given node is connected to other well-connected nodes. A node which is connected to other well-connected nodes may also be more important and have higher influence in the network. 
 - Betweenness centrality: Betweenness centrality is a measure of how important the node is for connections between other nodes. Thus, it may indicate how important the node is for the general flow or interconnectedness of the network.
@@ -82,7 +80,7 @@ source venv_network/bin/activate
 ```
 
 ### 2. Data 
-The raw data, which was originally downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is stored in the `data/` directory of this repository. Thus, after cloning the repository, no additional data needs to be retrieved. The `0_create_edgelist.py` script is specifically targeted towards this dataset. However, the `1_network_analysis.py` script can be used with any weighted edgeless stored in a .csv file, with the columns `nodeA`, `nodeB`, `weight`. 
+The raw data, which was originally downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is stored in the `data/` directory of this repository. Thus, after cloning the repository, no additional data needs to be retrieved. The `0_create_edgelist.py` script is specifically targeted towards this dataset. However, the `1_network_analysis.py` script can be used with any weighted edgeless stored in a .csv file, with the columns nodeA, nodeB, weight. 
 
 
 ### 3.0. Script to preprocess news data: 0_create_edgelist.py
@@ -104,18 +102,18 @@ __Parameters:__
 - `-i, --input_filepath`: *str, optional, default:* `../data/fake_or_real_news.csv`\
     File path to data. The script is targeted towards the real and fake news dataset.
     
-- `-s, --subset_input`: *str, optional, default:* `ALL`\
+- `-s, --subset_input`: *str, optional, default:* `REAL`\
    Subset of news to consider when creating edgelist, should be `ALL`, `REAL` or `FAKE`.
    
 
 __Output__ saved in `out/0_edgelists/`: 
 
 - `edgelist_{subset_input}.csv`\
-  CSV file of weighted edgelist with columns of `nodeA, nodeB, weight`. 
+  CSV file of weighted edgelist with columns of nodeA, nodeB, weight. 
 
 
 ### 3.1. Script for network analysis: 1_network_analysis.py
-The script `1_network_analysis.py` takes a .csv file with the columns `nodeA, nodeB, weight`, to generate a network graph with a spring layout, and save centrality measures (degree, eigenvector, betweenness) in a csv file. The script should be called from the `src/` directory: 
+The script `1_network_analysis.py` takes a .csv file with the columns nodeA, nodeB, weight, to generate a network graph with a spring layout, and save centrality measures (degree, eigenvector, betweenness) in a csv file. The script should be called from the `src/` directory: 
 
 ```bash
 # move into src 
@@ -131,7 +129,7 @@ python3 1_network_analysis.py -i ../out/0_edgelists/edgelist_FAKE.csv
 __Parameters:__
 
 - `-i, --input_filepath`: *str, optional, default:* `../out/0_edgelists/edgelist_REAL.csv`\
-    File path to csv of weighted edgelist with with columns `nodeA, nodeB, weight`. If you have preprocessed the fake and real news dataset and which to run network analysis for these files, use default for real news, `../out/0_edgelists/edgelist_FAKE.csv` for fake news or `../out/0_edgelists/edgelist_ALL.csv`for all news.
+    File path to csv of weighted edgelist with with columns nodeA, nodeB, weight. If you have preprocessed the fake and real news dataset and which to run network analysis for these files, use default for real news, `../out/0_edgelists/edgelist_FAKE.csv` for fake news or `../out/0_edgelists/edgelist_ALL.csv` for all news.
     
 - `-m, --min_edgeweight`: *str, optional, default:* `500`\
    Minimum edgeweight to consider for network graph. 
