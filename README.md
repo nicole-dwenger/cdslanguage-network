@@ -1,36 +1,32 @@
-# Assignment 4: Network Analysis
+# Network Analysis of Named Entities in Fake and Real News
 
 [Description](#description) | [Methods](#methods) | [Repository Structure](#repository-structure) | [Usage](#usage) | [Results and Disucssion](#results-and-discussion) | [Contact](#contact)
 
 ## Description
 > This project relates to Assignment 4: Network Analysis of the course Language Analytics.
 
-Network Analysis can be applied in many different ways and for different purposes across different fields of research. One of these fields is NLP. For instance, it can be used to find named entities which are occurring in the same document, and thus entities (nodes) and their relations (edges) in a given network. In this project, networks of names entities of people in fake and real news are explored using a dataset from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset). Network graphs and measures are generated for both subsets of real news, fake news, and for all news.
+The aim of this project was to combine the method of Network Analysis and with named entities in text. Specifically, named entities of persons were extracted from a dataset of fake and real news, to investigate their importance and relationships. Rather than only looking at the entire news data, networks were also generated using subsets of fake and real news, to be able to compare the people mentioned in these text documents. Thus, this repository contains two scripts: (1) targeted towards the news data, to extract a weighted edge-list of texts in the fake and real news dataset, and (2) a generalisable command-line script for simple network analysis. When developing the scripts, one aim was also to bundle up functions in a class to increase code modularity.
 
-The repository provides two scripts: (1) a script targeted toward the news-headline data, to extract a weighted edge-list of texts in the fake and real news dataset, and (2) a generalisable command-line script for simple network analysis. When developing the scripts, one aim was also to bundle up functions in a class for increased code modularity.
 
 ## Methods
 
 ### Data and Preprocessing
-The data used for this project is a dataset from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset), containing 7796 news texts, which are labeled as FAKE or REAL. For the network analysis, this data was preprocessed to extract a weighted edgelist, using the following steps: 
+The dataset of fake and real news was downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset), containing 7796 news texts, which are labeled as fake or real. To create the weighted edge-list, this data was preprocessed using the following steps: 
 
-1. Extract named entities of each text
-2. Clean the named entities (this step is not exhaustive!):
+1. Extract named entities of PERSON with spaCy’s model `en_core_web_sm`.
+2. Many of the extracted names entities referred to the same person, but were spelled slightly differently or only contained part of the full name. I decided to remove some of the duplicates, but this step is in no way exhaustive and might induce biases (see note below!). The following names were replaced: 
     - Remove ":" (were appearing in some named entities).
     - Replace *Hillary*, *hillary*, *Clinton*, *clinton*, *hillary clinton*, *Hillary Rodham Clinton*, *Hillary Clinton's* with *Hillary Clinton*.
     - Replace *trump*, *Trump*, *donald trump*, *Donald J Trump*, *Donald J. Trump* with *Donald Trump*.
     - Replace *obama*, *Obama*, *barack obama* with *Barack Obama*.
-3. Generate all possible combinations (edges) of pairs of named entities (nodes). 
-4. Calculate the number of occurance of these combinations (edges).
+3. Extract all combinations (edges) of pairs of named entities (nodes) within each text. 
+4. Calculate the number of occurrences of these combinations (edges) across all texts.
 5. Save pairs of nodes and their occurances (weight) in a .csv file, with columns nodeA, nodeB, weight.
 
 **Note:** I am aware, that the replacing of names in step 2 might induce some biases, as these names might have a higher weight, compared to others were variations of names are still present. Ideally, all names referring to the same name could be replaced. However, this also relies on some assumptions, e.g. *Hillary* is *Hillary Clinton* and not a different *Hillary*. 
 
 ### Network Analysis
-Network Analysis was performed by generating a network graph from the weighted edge-list. This graph was generated using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). Further, it computes centrality measures, which can provide differen information of the nodes (here the named entities, persons) and edges:
-- Degree centrality: Degree centrality is a measure of how many edges are connected to a given node. A node (entity) which is connected to many nodes may be more important. 
-- Eigenvector centrality: Eigenvector centrality is a measure of how much a given node is connected to other well-connected nodes. A node which is connected to other well-connected nodes may also be more important and have higher influence in the network. 
-- Betweenness centrality: Betweenness centrality is a measure of how important the node is for connections between other nodes. Thus, it may indicate how important the node is for the general flow or interconnectedness of the network.
+Two important concepts in network analysis are nodes and edges. For this project, the nodes were the extracted named entities of people, while their relations are the edges of the network. The network analysis was performed by generating a network graph of the weighted edgelist. This graph was generated using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). Further, the following centrality measures were extracted, to provide additional information about the nodes and edges. *Degree centrality* is a measure of how many edges are connected to a given node. A node (entity) which is connected to many nodes may be more important. *Eigenvector centrality* is a measure of how much a given node is connected to other well-connected nodes. A node which is connected to other well-connected nodes may also be more important and have higher influence in the network. *Betweenness centrality* is a measure of how important the node is for connections between other nodes. Thus, it may indicate how important the node is for the general flow or interconnectedness of the network.
 
 
 ## Repository Structure 
@@ -80,11 +76,14 @@ source venv_network/bin/activate
 ```
 
 ### 2. Data 
-The raw data, which was originally downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is stored in the `data/` directory of this repository. Thus, after cloning the repository, no additional data needs to be retrieved. The `0_create_edgelist.py` script is specifically targeted towards this dataset. However, the `1_network_analysis.py` script can be used with any weighted edgeless stored in a .csv file, with the columns nodeA, nodeB, weight. 
+The raw data, which was originally downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is stored in the `data/` directory of this repository. Thus, after cloning the repository, no additional data needs to be retrieved.
 
 
+### 3. Scripts
+This repository contains two scripts: `0_create_edgelist.py` and `1_network_analysis.py`. The former is specifically targeted towards the fake and real news dataset, and processes the data as described above to return a weighted edgelist. The `1_network_analysis.py` script conducts the actual network analysis, and is aimed to be more generalisable, as it can be used with any weighted edgeless stored in a CSV file, with the columns nodeA, nodeB, weight. Detailed instructions to run the scripts is provided below. 
+ 
 ### 3.0. Script to preprocess news data: 0_create_edgelist.py
-The script `0_create_edgelist.py` preprocesses the news dataset, as described in [preprocessing](#data-and-preprocessing). The script should be called from the `src/` directory: 
+The script 0_create_edgelist.py preprocesses the news dataset, as described in [preprocessing](#data-and-preprocessing). As the news dataset can be divided into fake and real news, it has the option to create edgelists for these subsets of data.  The script should be called from the `src/` directory: 
 
 ```bash
 # move into src 
@@ -113,7 +112,7 @@ __Output__ saved in `out/0_edgelists/`:
 
 
 ### 3.1. Script for network analysis: 1_network_analysis.py
-The script `1_network_analysis.py` takes a .csv file with the columns nodeA, nodeB, weight, to generate a network graph with a spring layout, and save centrality measures (degree, eigenvector, betweenness) in a csv file. The script should be called from the `src/` directory: 
+The script `1_network_analysis.py` takes a CSV file with the columns nodeA, nodeB, weight, to generate a network graph with a spring layout, and save centrality measures (degree, eigenvector, betweenness) in a CSV file. The script should be called from the `src/` directory: 
 
 ```bash
 # move into src 

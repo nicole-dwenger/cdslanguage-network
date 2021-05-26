@@ -2,7 +2,7 @@
 
 """
 This script preprocesses data for network analysis. 
-It extract named entities for each text in a text, and creates a weighted edgelist. 
+It extract named entities of PERSON across texts, and creates a weighted edgelist. 
 
 Steps:
   - Save all texts in a list
