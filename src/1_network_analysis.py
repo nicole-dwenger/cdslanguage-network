@@ -10,8 +10,8 @@ Steps:
   - Extract degree, betweenness and eigenvector centrality measures and save as csv
 
 Input: 
-  - -i, --input_filepath, optional, default = ../out/0_edgelists/edgelist_REAL.csv"
-  - -m, --minimum_edgeweight, optional, default = 500, mimimum edgeweight to consider for network 
+  - -i, --input_filepath, optional, default: ../out/0_edgelists/edgelist_REAL.csv"
+  - -m, --minimum_edgeweight, optional, default: 500, mimimum edgeweight to consider for network 
   
 Output saved in ../out/1_network_analysis/:
   - network_graph_{filename}.py

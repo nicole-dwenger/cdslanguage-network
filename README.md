@@ -5,7 +5,7 @@
 ## Description
 > This project relates to Assignment 4: Network Analysis of the course Language Analytics.
 
-The aim of this project was to combine the method of Network Analysis and with named entities in text. Specifically, named entities of persons were extracted from a dataset of fake and real news, to investigate their importance and relationships. Rather than only looking at the entire news data, networks were also generated using subsets of fake and real news, to be able to compare the people mentioned in these text documents. Thus, this repository contains two scripts: (1) targeted towards the news data, to extract a weighted edge-list of texts in the fake and real news dataset, and (2) a generalisable command-line script for simple network analysis. When developing the scripts, one aim was also to bundle up functions in a class to increase code modularity.
+The aim of this project was to combine the method of network analysis with named entity recognition in text. Specifically, named entities of persons were extracted from a dataset of fake and real news, to investigate their importance and relationships. Rather than only looking at the entire news data, networks were also generated using subsets of fake and real news, to be able to compare the people mentioned in these text documents. This repository contains two scripts: (1) targeted towards the news data, to extract a weighted edge-list of texts in the fake and real news dataset, and (2) a generalisable command-line script for simple network analysis. When developing the scripts, one aim was also to bundle up functions in a class to increase code modularity.
 
 
 ## Methods
@@ -15,7 +15,6 @@ The dataset of fake and real news was downloaded from [Kaggle](https://www.kaggl
 
 1. Extract named entities of PERSON with spaCy’s model `en_core_web_sm`.
 2. Many of the extracted names entities referred to the same person, but were spelled slightly differently or only contained part of the full name. I decided to remove some of the duplicates, but this step is in no way exhaustive and might induce biases (see note below!). The following names were replaced: 
-    - Remove ":" (were appearing in some named entities).
     - Replace *Hillary*, *hillary*, *Clinton*, *clinton*, *hillary clinton*, *Hillary Rodham Clinton*, *Hillary Clinton's* with *Hillary Clinton*.
     - Replace *trump*, *Trump*, *donald trump*, *Donald J Trump*, *Donald J. Trump* with *Donald Trump*.
     - Replace *obama*, *Obama*, *barack obama* with *Barack Obama*.
@@ -26,7 +25,7 @@ The dataset of fake and real news was downloaded from [Kaggle](https://www.kaggl
 **Note:** I am aware, that the replacing of names in step 2 might induce some biases, as these names might have a higher weight, compared to others were variations of names are still present. Ideally, all names referring to the same name could be replaced. However, this also relies on some assumptions, e.g. *Hillary* is *Hillary Clinton* and not a different *Hillary*. 
 
 ### Network Analysis
-Two important concepts in network analysis are nodes and edges. For this project, the nodes were the extracted named entities of people, while their relations are the edges of the network. The network analysis was performed by generating a network graph of the weighted edgelist. This graph was generated using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). Further, the following centrality measures were extracted, to provide additional information about the nodes and edges. *Degree centrality* is a measure of how many edges are connected to a given node. A node (entity) which is connected to many nodes may be more important. *Eigenvector centrality* is a measure of how much a given node is connected to other well-connected nodes. A node which is connected to other well-connected nodes may also be more important and have higher influence in the network. *Betweenness centrality* is a measure of how important the node is for connections between other nodes. Thus, it may indicate how important the node is for the general flow or interconnectedness of the network.
+The weighted edge-lists were used as input to the network analysis. Similar to the preprocessing, this analysis was done for the entire dataset, but also for subsets of fake and real news. In all cases, the extracted named entities represented the nodes in the network, while their relations (or co-occurrence) were the edges. The network graph was generated for edges with a minimum edge-weight of 500, using a spring layout, which positions nodes using the Fuchterman-Reinglod force-directed algorithm (more information [here](https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html)). Further, the following centrality measures were extracted, to provide additional information about the nodes and edges. **Degree centrality** is a measure of how many edges are connected to a given node. A node (entity) that is connected to many nodes may be more important. **Eigenvector centrality** is a measure of how much a given node is connected to other well-connected nodes. A node that is connected to other well-connected nodes may also be more important and have a higher influence on the network. **Betweenness centrality** is a measure of how important the node is for connections between other nodes. Thus, it may indicate how important the node is for the general flow or interconnectedness of the network.
 
 
 ## Repository Structure 
@@ -59,7 +58,7 @@ Two important concepts in network analysis are nodes and edges. For this project
 **!** The scripts have only been tested on Linux, using Python 3.6.9. 
 
 ### 1. Cloning the Repository and Installing Dependencies
-To run the scripts in this repository, I recommend cloning this repository and installing necessary dependencies in a virtual environment. The bash script `create_venv.sh` can be used to create a virtual environment called `venv_network` with all necessary dependencies, listed in the `requirements.txt` file. The following commands can be used:
+To run the scripts in this repository, I recommend cloning this repository and installing necessary dependencies in a virtual environment. The bash script `create_venv.sh` can be used to create a virtual environment called `venv_network` with all necessary dependencies, listed in the `requirements.txt` file. This will also load the required language model (`en_core_web_sm`, from spaCy) The following commands can be used:
 
 ```bash
 # cloning the repository
@@ -78,8 +77,7 @@ source venv_network/bin/activate
 ### 2. Data 
 The raw data, which was originally downloaded from [Kaggle](https://www.kaggle.com/nopdev/real-and-fake-news-dataset) is stored in the `data/` directory of this repository. Thus, after cloning the repository, no additional data needs to be retrieved.
 
-
-### 3. Scripts
+### 3. Running the Scripts
 This repository contains two scripts: `0_create_edgelist.py` and `1_network_analysis.py`. The former is specifically targeted towards the fake and real news dataset, and processes the data as described above to return a weighted edgelist. The `1_network_analysis.py` script conducts the actual network analysis, and is aimed to be more generalisable, as it can be used with any weighted edgeless stored in a CSV file, with the columns nodeA, nodeB, weight. Detailed instructions to run the scripts is provided below. 
  
 ### 3.0. Script to preprocess news data: 0_create_edgelist.py
@@ -128,7 +126,7 @@ python3 1_network_analysis.py -i ../out/0_edgelists/edgelist_FAKE.csv
 __Parameters:__
 
 - `-i, --input_filepath`: *str, optional, default:* `../out/0_edgelists/edgelist_REAL.csv`\
-    File path to csv of weighted edgelist with with columns nodeA, nodeB, weight. If you have preprocessed the fake and real news dataset and which to run network analysis for these files, use default for real news, `../out/0_edgelists/edgelist_FAKE.csv` for fake news or `../out/0_edgelists/edgelist_ALL.csv` for all news.
+    File path to csv of weighted edgelist with with columns nodeA, nodeB, weight. By default, the scripts runs the network analysis for the real news subset. If you have preprocessed the news dataset and wish to run network analysis for the fake news or entire data, use `../out/0_edgelists/edgelist_FAKE.csv` for fake news or `../out/0_edgelists/edgelist_ALL.csv` for all news.
     
 - `-m, --min_edgeweight`: *int, optional, default:* `500`\
    Minimum edgeweight to consider for network graph. 
@@ -144,7 +142,7 @@ __Output__ saved in `out/1_network_analysis/`:
   
 
 ## Results and Discussion 
-Output of the scripts can be found in the corresponding directory in `out/`. Besides providing a script for simple network analysis, the aim of this project was also to compare the networks of named entitie (people) in fake and real news. Below, the networks of fake and real news for edges with a minimum edgeweight of 500 are displayed:
+Output of the scripts can be found in the corresponding directory in `out/`. Besides providing a script for simple network analysis, the aim of this project was also to compare the networks of named entities (people) in fake and real news. Below, the networks of fake and real news for edges with a minimum edgeweight of 500 are displayed:
 
 Network graph of real news with minimum edgeweight of 500:
 
@@ -154,9 +152,9 @@ Network graph of fake news with minimum edgeweight of 500:
 
 ![](https://github.com/nicole-dwenger/cdslanguage-network/blob/master/out/1_network/network_graph_edgelist_FAKE.png)
 
-Overall, in both graphs Hillary Clinton seems to be an important node in the data, as she also has the highest centrality measures, for degree, eigenvector, betweenness. Further, Donald Trump, Barack Obama and Bill Clinton also seem to be quite interconnected and closely related to Hillary. As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarise have a higher weight, than those where several name variants are still in the data. 
+Overall, in both graphs, Hillary Clinton seems to be an important node in the data, as she also has the highest centrality measures, for degree, eigenvector, betweenness centrality. Further, Donald Trump, Barack Obama and Bill Clinton also seem to be quite interconnected and closely related to Hillary. As mentioned above, replacing variants of names for some people, but not for all might have induced some biases in the data, such that those for which names were summarised have a higher weight than those where several name variants are still in the data. 
 
-When comparing graphs of real and fake news, it seems like there are fewer nodes and edges in the fake compared to the real news. Looking at the .csv of centrality measures, there is about half (54) as many nodes in the fake compared to the real (98) news data. This could have several reasons, such as overall fewer named entities in the fake news data (which could also be caused by less text), fewer entities which are highly connected (with a minimum edgeweight of 500). 
+When comparing graphs of real and fake news, it seems like there are fewer nodes and edges in the fake compared to the real news. Looking at the CSV of centrality measures, there is about half (54) as many nodes in the fake compared to the real (98) news data. This could have several reasons, such as overall fewer named entities in the fake news data (which could also be caused by less text), fewer entities that are highly connected (with a minimum edge weight of 500). 
 
 
 ## Contact
